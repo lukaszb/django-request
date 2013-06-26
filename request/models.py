@@ -1,3 +1,5 @@
+import django
+
 from socket import gethostbyaddr
 
 from django.db import models
@@ -106,4 +108,8 @@ class Request(models.Model):
         if not settings.REQUEST_LOG_USER:
             self.user = None
 
-        return models.Model.save(self, force_insert, force_update, using, update_fields)
+        args = [force_insert, force_update, using]
+        if django.VERSION >= (1, 5):
+            args += [update_fields]
+        return models.Model.save(self, *args)
+
